@@ -21,3 +21,7 @@ clean :
 
 # load downloaded and unzipped data into the database
 load :
+
+# other misc scripts which don't form part of the main bts-nsw2pgsql scripts, but still may be usefull
+extras :
+	src/extras/train/get-stations-from-osm.sh
