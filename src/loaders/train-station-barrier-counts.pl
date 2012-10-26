@@ -7,15 +7,15 @@
 # rights to this work.
 # http://creativecommons.org/publicdomain/zero/1.0/
 
+# This script will consume the CityRail_StationBarrierCounts.csv file and
+# produce a JSON file of the same data in normalised form and to STDOUT
+# a PostgreSQL COPY file.
 
 use strict;
 use Text::CSV;
-use Data::Dumper;
+use JSON;
 
-# destination database schema + dot, and table
-my $schema = "bts.";
-my $dst_table = "train_station_barrier_counts";
-
+# check program usage
 if (@ARGV != 1) {
   print "Usage: $0 <CityRail_StationBarrierCounts.csv>\n";
 }
@@ -25,10 +25,24 @@ my $src_csv_full_filename = $ARGV[0];
 # open the source csv file for reading
 open (my $src_data, '<', "$src_csv_full_filename") or die $!;
 
+# create the JSON object for producing the JSON output
+my $json = JSON->new->allow_nonref;
+
+# set the JSON writer to pretty print
+$json = $json->pretty;
+
+# open the JSON file for writing
+open (my $json_file, '>', "train-station-barrier-counts.json") or die $!;
+
+# use Text::CSV to read the CSV file
 my $csv = Text::CSV->new();
 
 my @column_names = $csv->column_names($csv->getline($src_data));
 
+# keeps track of the data to store in the JSON file
+my @entries;
+
+# for each row in the source CSV file
 while (my $row_ref = $csv->getline_hr($src_data)) {
   my %row = %{$row_ref};
 
@@ -44,22 +58,39 @@ while (my $row_ref = $csv->getline_hr($src_data)) {
   delete $row{"Rank"};
 
   # ...leaving only the dynamic ones left.
+  # by looping through each one we get a normalised database
   foreach my $key (keys %row) {
     my $value = $row{$key};
     $value =~ s/,//; # remove thousands separator from numbers
-    if ($key =~ /^(?<hour_start>\d{2}):(?<minute_start>\d{2}) to (?<hour_end>\d{2}):(?<minute_end>\d{2}) (?<direction>IN|OUT)$/) {
+    if ($key =~ /^(?<hour_start>\d{2}):(?<minute_start>\d{2}) to (?<hour_end>\d{2}):(?<minute_end>\d{2}) (?<direction>IN|OUT)$/) { # parse out the column heading to find the exact timespan paramaters
+      # write out the PostgreSQL COPY line to STDOUT
       print "$line\t" .
             "$station\t" .
             "$year\t" .
-#            "[" . $+{"hour_start"} . ":" . $+{"minute_start"} . ", " . $+{"hour_end"} . ":" . $+{"minute_end"} . "]" . "\t" .
+#            "[" . $+{"hour_start"} . ":" . $+{"minute_start"} . ", " . $+{"hour_end"} . ":" . $+{"minute_end"} . "]" . "\t" . # if using a PostgreSQL range, use this
             $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"} . "\t" .
             $+{"direction"} . "\t" .
             $value .
             "\n";
+
+      # add this to the JSON structure
+      push @entries, {
+          line => $line,
+          station => $station,
+          year => $year,
+          direction => $+{"direction"},
+          timerange => $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"},
+          count => $value + 0 #+0 to force to number type
+        };
     }else{
         warn "Unexpected column heading \"$key\"\n";
     }
   }
 }
 
+# write the JOSN structure to disk
+print $json_file $json->encode(\@entries);
+
+# close open files
 close $src_data or warn $!;
+close $json_file or warn $!;
