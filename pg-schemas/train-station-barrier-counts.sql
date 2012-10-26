@@ -1,3 +1,8 @@
+-- To the extent possible under law, the person who associated CC0
+-- with this work has waived all copyright and related or neighboring
+-- rights to this work.
+-- http://creativecommons.org/publicdomain/zero/1.0/
+
 -- Can't do this is a range, as a range won't loop round midnight
 CREATE DOMAIN bts.timerange AS text
 CHECK (
