@@ -18,9 +18,13 @@ download :
 
 # clean the database
 clean :
+  psql -c "DROP SCHEMA bts;"
+  psql -c "CREATE SCHEMA bts;"
 
 # load downloaded and unzipped data into the database
 load :
+  psql -f pg-schemas\train-station-barrier-counts.sql
+  ./src/loaders/train-station-barrier-counts.pl 02-DATASETS-UNZIP/Train/CityRail_StationBarrierCounts_2004-2011/CityRail_StationBarrierCounts\ 2004-2011.csv | psql -c "COPY bts.train_station_barrier_counts FROM STDIN;"
 
 # other misc scripts which don't form part of the main bts-nsw2pgsql scripts, but still may be usefull
 extras :
