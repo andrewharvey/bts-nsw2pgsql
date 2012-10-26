@@ -14,7 +14,7 @@ if [ -d "01-DATASETS-ZIP" ] ; then
     for f in 01-DATASETS-ZIP/$stats/*.zip ; do
       b=`basename "$f" '.zip'`
       mkdir -p "02-DATASETS-UNZIP/$stats/$b/"
-      unzip "$f" -d "02-DATASETS-UNZIP/$stats/$b/"
+      unzip -n "$f" -d "02-DATASETS-UNZIP/$stats/$b/"
     done
   done
 else
