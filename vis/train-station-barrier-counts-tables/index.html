@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>Train Station Barrier Counts - Tables</title>
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="lib/css/normalize.min.css">
+        <link rel="stylesheet" href="lib/css/main.css">
+        <link rel="stylesheet" href="css/app.css">
+
+        <script src="lib/js/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+        <script src="/javascript/d3/d3.min.js"></script>
+    </head>
+    <body>
+
+        <div class="header-container">
+            <header class="wrapper clearfix">
+                <h1 class="title">Train Station Barrier Counts - Tables</h1>
+            </header>
+        </div>
+
+        <div class="main-container">
+            <div class="main wrapper clearfix">
+
+                <article>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>02:00-06:00</th>
+                                <th>06:00-09:30</th>
+                                <th>09:30-15:00</th>
+                                <th>15:00-18:30</th>
+                                <th>18:30-02:00</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>IN (journey start)</th>
+                                <td><div id="in-sunrise" class="card"></div></td>
+                                <td><div id="in-morning" class="card"></div></td>
+                                <td><div id="in-noon" class="card"></div></td>
+                                <td><div id="in-afternoon" class="card"></div></td>
+                                <td><div id="in-sunset" class="card"></div></td>
+                                <td><div id="in-24" class="card"></div></td>
+                            </tr>
+                            <tr>
+                                <th>OUT (journey end)</th>
+                                <td><div id="out-sunrise" class="card"></div></td>
+                                <td><div id="out-morning" class="card"></div></td>
+                                <td><div id="out-noon" class="card"></div></td>
+                                <td><div id="out-afternoon" class="card"></div></td>
+                                <td><div id="out-sunset" class="card"></div></td>
+                                <td><div id="out-24" class="card"></div></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>TOTAL</th>
+                                <td><div id="total-sunrise" class="card"></div></td>
+                                <td><div id="total-morning" class="card"></div></td>
+                                <td><div id="total-noon" class="card"></div></td>
+                                <td><div id="total-afternoon" class="card"></div></td>
+                                <td><div id="total-sunset" class="card"></div></td>
+                                <td><div id="total-24" class="card"></div></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </article>
+            </div> <!-- #main -->
+        </div> <!-- #main-container -->
+
+        <div class="footer-container">
+            <footer class="wrapper">
+                <p>Based on <a href="http://www.bts.nsw.gov.au/Statistics/Train/default.aspx">CityRail Station Barrier Counts</a> data from Bureau of Transport Statistics NSW (Based on Bureau of Transport Statistics data.).</p>
+                <p>As per the <a href="http://www.bts.nsw.gov.au/Copyright-disclaimer/default.aspx">copyright disclaimer</a>, the data is Copyright by the Crown in right of NSW through Transport NSW and licensed under the <a href="http://creativecommons.org/licenses/by/3.0/au/">Creative Commons Attribution 3.0 Australia license</a>.</p>
+                <p>This visualisation and representation of the data is Copyright by Andrew Harvey and released under the CC0 license. (Although CC0 licensed, this doesn't change your obligation to meet the requirements of the CC-BY 3.0 Australia license, under which the source data is published, when reproducing or remixing this page.)</p>
+                <p>All <a href="https://github.com/andrewharvey/bts-nsw2pgsql">source code used to make this visualisation and wrangle the data is available</a>.</p>
+            </footer>
+        </div>
+
+        <script src="lib/js/jquery-1.8.2.min.js"></script>
+
+        <script src="js/main.js"></script>
+    </body>
+</html>

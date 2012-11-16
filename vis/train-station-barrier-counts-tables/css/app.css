@@ -1,0 +1,50 @@
+/* CSS extension for train-station-barrier-counts-tables document
+
+   This file is licensed CC0 by Andrew Harvey <andrew.harvey4@gmail.com>
+
+   To the extent possible under law, the person who associated CC0
+   with this work has waived all copyright and related or neighboring
+   rights to this work.
+   http://creativecommons.org/publicdomain/zero/1.0/
+*/
+
+
+table.table {
+  font-size: 10px;
+  line-height: 1;
+  text-align: center;
+}
+
+/* different background colours for odd/even rows */
+table.table tr:nth-child(odd)    { background-color:#eee; }
+table.table tr:nth-child(even)    { background-color:#fff; }
+table.table thead tr:first-child { background-color: #aaa; }
+table.table td:first-child { font-weight: bold; }
+
+/* one table card */
+.card {
+  height: 300px;
+  overflow-y: scroll;
+  margin: 5px;
+}
+
+footer {
+  font-size: small;
+  line-height: 1;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+table.table tbody tr:before {
+  content: counter(tr) !important;
+  counter-increment: tr !important;
+  padding: 0 3px !important;
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+table tbody {
+  counter-reset: tr;
+}
