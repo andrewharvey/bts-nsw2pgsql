@@ -33,6 +33,7 @@ $json = $json->pretty;
 
 # open the JSON file for writing
 open (my $json_file, '>', "train-station-barrier-counts.json") or die $!;
+open (my $csv_out_file, '>', "train-station-barrier-counts.csv") or die $!;
 
 # use Text::CSV to read the CSV file
 my $csv = Text::CSV->new();
@@ -41,6 +42,8 @@ my @column_names = $csv->column_names($csv->getline($src_data));
 
 # keeps track of the data to store in the JSON file
 my @entries;
+
+print $csv_out_file join (",", qw/line station year timerange direction count/). "\n";
 
 # for each row in the source CSV file
 while (my $row_ref = $csv->getline_hr($src_data)) {
@@ -64,13 +67,13 @@ while (my $row_ref = $csv->getline_hr($src_data)) {
     $value =~ s/,//; # remove thousands separator from numbers
     if ($key =~ /^(?<hour_start>\d{2}):(?<minute_start>\d{2}) to (?<hour_end>\d{2}):(?<minute_end>\d{2}) (?<direction>IN|OUT)$/) { # parse out the column heading to find the exact timespan paramaters
       # write out the PostgreSQL COPY line to STDOUT
-      print "$line\t" .
-            "$station\t" .
-            "$year\t" .
+      print join ("\t", "$line",
+            "$station" ,
+            "$year" ,
 #            "[" . $+{"hour_start"} . ":" . $+{"minute_start"} . ", " . $+{"hour_end"} . ":" . $+{"minute_end"} . "]" . "\t" . # if using a PostgreSQL range, use this
-            $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"} . "\t" .
-            $+{"direction"} . "\t" .
-            $value .
+            $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"} ,
+            $+{"direction"} ,
+            $value) .
             "\n";
 
       # add this to the JSON structure
@@ -82,6 +85,15 @@ while (my $row_ref = $csv->getline_hr($src_data)) {
           timerange => $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"},
           count => $value + 0 #+0 to force to number type
         };
+
+      print $csv_out_file join (",", "$line",
+            "$station" ,
+            "$year" ,
+#            "[" . $+{"hour_start"} . ":" . $+{"minute_start"} . ", " . $+{"hour_end"} . ":" . $+{"minute_end"} . "]" . "\t" . # if using a PostgreSQL range, use this
+            $+{"hour_start"} . ":" . $+{"minute_start"} . "-" . $+{"hour_end"} . ":" . $+{"minute_end"} ,
+            $+{"direction"} ,
+            $value) .
+            "\n";
     }else{
         warn "Unexpected column heading \"$key\"\n";
     }
@@ -94,3 +106,4 @@ print $json_file $json->encode(\@entries);
 # close open files
 close $src_data or warn $!;
 close $json_file or warn $!;
+close $csv_out_file or warn $!;
