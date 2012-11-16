@@ -18,14 +18,17 @@ download :
 
 # clean the database
 clean :
-  psql -c "DROP SCHEMA bts;"
-  psql -c "CREATE SCHEMA bts;"
+	psql -c "DROP SCHEMA bts CASCADE;"
+	psql -c "CREATE SCHEMA bts;"
+	rm -rf query-extracts
 
 # load downloaded and unzipped data into the database
 load :
-  psql -f pg-schemas\train-station-barrier-counts.sql
-  ./src/loaders/train-station-barrier-counts.pl 02-DATASETS-UNZIP/Train/CityRail_StationBarrierCounts_2004-2011/CityRail_StationBarrierCounts\ 2004-2011.csv | psql -c "COPY bts.train_station_barrier_counts FROM STDIN;"
+	psql -f pg-schemas/train-station-barrier-counts.sql
+	./src/loaders/train-station-barrier-counts.pl 02-DATASETS-UNZIP/Train/CityRail_StationBarrierCounts_2004-2011/CityRail_StationBarrierCounts\ 2004-2011.csv | psql -c "COPY bts.train_station_barrier_counts FROM STDIN;"
+	# now run queries on the loaded data to export it to CSV
+	./src/extras/train/views-as-csv.sh
 
 # other misc scripts which don't form part of the main bts-nsw2pgsql scripts, but still may be usefull
 extras :
-	src/extras/train/get-stations-from-osm.sh
+	./src/extras/train/get-stations-from-osm.sh
