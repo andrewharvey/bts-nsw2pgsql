@@ -13,8 +13,8 @@ clean-download :
 
 # download and unzip data from www.bts.nsw.gov.au
 download :
-	./01-download.sh
-	./02-unzip.sh
+	./src/01-download.sh
+	./src/02-unzip.sh
 
 # clean the database
 clean :
